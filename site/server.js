@@ -10,6 +10,7 @@ const app = express();
 const PORT = Number(process.env.PORT) || 3000;
 const DATABASE_URL = process.env.DATABASE_URL;
 const PUBLIC_DIR = path.join(__dirname, 'public');
+const GOOGLE_NEWS_QUERY = process.env.GOOGLE_NEWS_QUERY || 'notícias Brasil contexto';
 
 const defaultOrigins = ['http://localhost:3000', 'http://127.0.0.1:3000'];
 const allowedOrigins = (process.env.ALLOWED_ORIGINS || defaultOrigins.join(',')).split(',').map((item) => item.trim()).filter(Boolean);
@@ -57,6 +58,114 @@ function sanitizeText(value, maxLength = 2000) {
   return value.replace(/[<>]/g, '').trim().slice(0, maxLength);
 }
 
+function decodeHtmlEntities(value = '') {
+  return String(value)
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#039;/g, "'")
+    .replace(/&apos;/g, "'")
+    .replace(/<[^>]+>/g, '')
+    .trim();
+}
+
+function extractTagContent(xml, tagName) {
+  if (!xml || !tagName) return '';
+  const pattern = new RegExp(`<${tagName}[^>]*>([\\s\\S]*?)<\\/${tagName}>`, 'i');
+  const match = xml.match(pattern);
+  if (!match) return '';
+  return decodeHtmlEntities(match[1]);
+}
+
+const fallbackSources = [
+  {
+    title: 'Google News: cobertura em destaque',
+    source: 'Google News',
+    url: 'https://news.google.com/',
+    publishedAt: new Date().toISOString(),
+    summary: 'Índice de notícias públicas com fontes atribuídas. Resumo e contexto são realizados com base no conteúdo original, com links para as matérias originais.',
+    type: 'Matérias',
+    category: 'Atualidade'
+  },
+  {
+    title: 'G1',
+    source: 'G1',
+    url: 'https://g1.globo.com/',
+    publishedAt: new Date().toISOString(),
+    summary: 'Cobertura nacional com reportagens, análises e contextos sobre política, economia, sociedade e cultura.',
+    type: 'Mídia',
+    category: 'Brasil'
+  },
+  {
+    title: 'Folha de S.Paulo',
+    source: 'Folha de S.Paulo',
+    url: 'https://www.folha.uol.com.br/',
+    publishedAt: new Date().toISOString(),
+    summary: 'Jornal com apuração, análise e cobertura de temas nacionais e internacionais.',
+    type: 'Mídia',
+    category: 'Brasil'
+  },
+  {
+    title: 'Reuters',
+    source: 'Reuters',
+    url: 'https://www.reuters.com/',
+    publishedAt: new Date().toISOString(),
+    summary: 'Cobertura internacional e noticiário em tempo real com rigor jornalístico e atribuição clara.',
+    type: 'Mídia',
+    category: 'Internacional'
+  }
+];
+
+async function fetchGoogleNews(query = GOOGLE_NEWS_QUERY) {
+  const safeQuery = String(query || GOOGLE_NEWS_QUERY).trim() || GOOGLE_NEWS_QUERY;
+  const url = `https://news.google.com/rss/search?q=${encodeURIComponent(safeQuery)}&hl=pt-BR&gl=BR&ceid=BR:pt-BR`;
+
+  try {
+    const response = await fetch(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (compatible; VozVeridica/1.0; +https://example.com)'
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`Google News respondeu com ${response.status}`);
+    }
+
+    const xml = await response.text();
+    const matches = [...xml.matchAll(/<item>([\s\S]*?)<\/item>/gi)];
+
+    const items = matches
+      .map((match) => match[1])
+      .map((itemXml) => {
+        const title = extractTagContent(itemXml, 'title');
+        const link = extractTagContent(itemXml, 'link');
+        const source = extractTagContent(itemXml, 'source');
+        const publishedAt = extractTagContent(itemXml, 'pubDate');
+        const description = extractTagContent(itemXml, 'description');
+
+        if (!title || !link) return null;
+
+        return {
+          title,
+          source: source || 'Google News',
+          url: link,
+          publishedAt: publishedAt || new Date().toISOString(),
+          summary: description || 'Resumo baseado no conteúdo público da matéria original, com a fonte atribuída no link do veículo.',
+          type: 'Matérias',
+          category: 'Atualidade'
+        };
+      })
+      .filter(Boolean)
+      .slice(0, 6);
+
+    return items.length ? items : fallbackSources;
+  } catch (error) {
+    console.warn('[GOOGLE NEWS] Falha ao consultar feed, usando fontes de segurança:', error.message);
+    return fallbackSources;
+  }
+}
+
 function isValidEmail(value) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value || '').trim());
 }
@@ -80,7 +189,7 @@ const mem = {
       imagem: 'https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?auto=format&fit=crop&w=1200&q=80',
       destaque: true,
       fonteOriginal: 'Agência Pública',
-      conteudo: 'A discussão sobre o uso de verbas públicas voltou ao centro do debate nacional. A questão central é como garantir rastreabilidade, fiscalização e responsabilização dos repasses feitos por meio de emendas, contratos e despesas indiretas.'
+      conteudo: 'A discussão sobre o uso de verbas públicas voltou ao centro do debate nacional. A questão central é como garantir rastreabilidade, fiscalização e responsabilização dos recursos públicos mantendo transparência e bom uso do dinheiro de todos.'
     },
     {
       id: 2,
@@ -93,7 +202,7 @@ const mem = {
       imagem: 'https://images.unsplash.com/photo-1559526324-4b87b5e36e44?auto=format&fit=crop&w=1200&q=80',
       destaque: false,
       fonteOriginal: 'Portal de Negócios',
-      conteudo: 'Pequenas empresas continuam buscando alternativas de crédito para sustentar expansão e capital de giro. A tendência é que a análise de risco e a educação financeira se tornem critérios centrais na tomada de decisão.'
+      conteudo: 'Pequenas empresas continuam buscando alternativas de crédito para sustentar expansão e capital de giro. A tendência é que a análise de risco e a educação financeira se tornem mais relevantes para quem busca manter negócios produtivos e competitivos.'
     },
     {
       id: 3,
@@ -106,13 +215,13 @@ const mem = {
       imagem: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=1200&q=80',
       destaque: false,
       fonteOriginal: 'Jornal da Cidade',
-      conteudo: 'A presença de ferramentas digitais nas escolas vem com desafios de infraestrutura, formação docente e acesso. Em paralelo, é necessário avaliar se a tecnologia amplia oportunidades ou cria mais desigualdades.'
+      conteudo: 'A presença de ferramentas digitais nas escolas vem com desafios de infraestrutura, formação docente e acesso. Em paralelo, é necessário avaliar se a tecnologia amplia oportunidades de aprendizagem e inclusão sustentável.'
     }
   ],
   products: [
-    { id: 1, nome: 'Assinatura VIP', descricao: 'Acesso exclusivo a análises, bastidores da redação e reportagens antecipadas.', preco: 29.9, imagem: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=800&q=80', badge: 'Mais popular' },
-    { id: 2, nome: 'Camiseta Oficial', descricao: 'Peça premium com algodão sustentável e estampa minimalista.', preco: 79.9, imagem: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=800&q=80', badge: 'Coleção' },
-    { id: 3, nome: 'E-book de Reportagens', descricao: 'Coletânea digital com os principais temas investigativos do portal.', preco: 49.9, imagem: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=80', badge: 'Digital' }
+    { id: 1, nome: 'Assinatura VIP', descricao: 'Acesso exclusivo a análises, bastidores da redação e reportagens antecipadas.', preco: 29.9, imagem: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=80', badge: 'Premium' },
+    { id: 2, nome: 'Camiseta Oficial', descricao: 'Peça premium com algodão sustentável e estampa minimalista.', preco: 79.9, imagem: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d3d0?auto=format&fit=crop&w=1200&q=80', badge: 'Coleção' },
+    { id: 3, nome: 'E-book de Reportagens', descricao: 'Coletânea digital com os principais temas investigativos do portal.', preco: 49.9, imagem: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=80', badge: 'Digital' }
   ],
   orders: [],
   newsletter: [],
@@ -362,6 +471,16 @@ app.get('/api/products', async (req, res) => {
   }
 });
 
+app.get('/api/sources', async (req, res) => {
+  try {
+    const query = String(req.query.q || GOOGLE_NEWS_QUERY).trim();
+    const data = await fetchGoogleNews(query);
+    res.json({ success: true, data });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
 app.post('/api/agent/ingest', async (req, res) => {
   try {
     const { tituloBruto, textoBruto, fonte, categoria, imagem, destaque } = req.body;
@@ -493,3 +612,4 @@ async function startServer() {
 }
 
 startServer();
+
