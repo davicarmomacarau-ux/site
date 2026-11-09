@@ -340,12 +340,59 @@
         gap: 22px;
       }
 
+      .source-toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-bottom: 24px;
+      }
+
+      .source-filters {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .filter-pill {
+        border: 1px solid var(--border);
+        background: white;
+        color: var(--muted);
+        border-radius: 999px;
+        padding: 0.62rem 0.95rem;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .filter-pill.active {
+        background: var(--surface-strong);
+        color: white;
+        border-color: var(--surface-strong);
+      }
+
+      .source-search {
+        max-width: 360px;
+        width: min(100%, 360px);
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        background: white;
+        padding: 0.82rem 1rem;
+        color: var(--text);
+      }
+
       .source-card {
         background: var(--surface);
         border: 1px solid var(--border);
         border-radius: 22px;
         overflow: hidden;
         box-shadow: 0 12px 30px rgba(15,23,42,0.04);
+      }
+
+      .source-card img {
+        width: 100%;
+        height: 220px;
+        object-fit: cover;
       }
 
       .source-badge {
@@ -564,6 +611,13 @@
         .mini-stats {
           grid-template-columns: 1fr;
         }
+        .source-toolbar {
+          display: block;
+        }
+        .source-search {
+          max-width: none;
+          margin-top: 12px;
+        }
       }
     </style>
   </head>
@@ -676,6 +730,17 @@
           <div class="section-head">
             <h2>Vídeos e matérias em destaque</h2>
             <p>Fontes relevantes para acompanhar o contexto e as análises do cenário atual.</p>
+          </div>
+
+          <div class="source-toolbar">
+            <div id="sourceFilters" class="source-filters" aria-label="Filtros das fontes">
+              <button class="filter-pill active" type="button" data-filter="all">Todos</button>
+              <button class="filter-pill" type="button" data-filter="Brasil Paralelo">Brasil Paralelo</button>
+              <button class="filter-pill" type="button" data-filter="Sputnik">Sputnik</button>
+              <button class="filter-pill" type="button" data-filter="Vídeos">Vídeos</button>
+              <button class="filter-pill" type="button" data-filter="Artigos">Artigos</button>
+            </div>
+            <input id="sourceSearch" class="source-search" type="search" placeholder="Buscar por tema, fonte ou tipo" aria-label="Buscar conteúdo externo" />
           </div>
 
           <div id="externalSources" class="source-grid" aria-live="polite"></div>
@@ -797,38 +862,53 @@
       const cartList = document.getElementById('cartList');
       const cartTotal = document.getElementById('cartTotal');
       const checkoutButton = document.getElementById('checkoutButton');
+      const sourceSearch = document.getElementById('sourceSearch');
       const cart = new Map();
 
       const sourceCatalog = [
         {
           name: 'Brasil Paralelo',
-          type: 'Vídeos e reportagens',
+          source: 'Brasil Paralelo',
+          type: 'Vídeos',
+          category: 'Teoria / política',
           description: 'Documentários, entrevistas e análise política com foco em contexto e investigação.',
           url: 'https://www.brasilparalelo.com.br/',
-          cta: 'Abrir Brasil Paralelo'
+          cta: 'Abrir Brasil Paralelo',
+          thumb: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=1200&q=80'
         },
         {
           name: 'Sputnik',
-          type: 'Cobertura internacional',
-          description: 'Acompanhamento de temas globais, geopolitica e informação em tempo real.',
+          source: 'Sputnik',
+          type: 'Artigos',
+          category: 'Internacional',
+          description: 'Cobertura internacional e contextualização de temas globais em tempo real.',
           url: 'https://br.sputniknews.com/',
-          cta: 'Acessar Sputnik'
+          cta: 'Acessar Sputnik',
+          thumb: 'https://images.unsplash.com/photo-1495020689067-958852a7765e?auto=format&fit=crop&w=1200&q=80'
         },
         {
           name: 'Brasil Paralelo — Canal',
-          type: 'Videos',
-          description: 'Conteúdos em vídeo com análises e discussões sobre economia, política e sociedade.',
+          source: 'Brasil Paralelo',
+          type: 'Vídeos',
+          category: 'Análise / debates',
+          description: 'Conteúdos em vídeo com análise de economia, política, cultura e sociedade.',
           url: 'https://www.youtube.com/@brasilparalelo',
-          cta: 'Ver no YouTube'
+          cta: 'Ver no YouTube',
+          thumb: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=80'
         },
         {
           name: 'Sputnik — Notícias',
-          type: 'Atualização',
-          description: 'Matérias diárias com foco em fatos e contexto internacional para leitura rápida.',
+          source: 'Sputnik',
+          type: 'Artigos',
+          category: 'Atualização',
+          description: 'Matérias diárias com foco em fatos, contexto internacional e interpretações rápidas.',
           url: 'https://br.sputniknews.com/noticias/',
-          cta: 'Ler artigos'
+          cta: 'Ler artigos',
+          thumb: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=1200&q=80'
         }
       ];
+
+      let selectedSourceFilter = 'all';
 
       function formatCurrency(value) {
         return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(Number(value || 0));
@@ -840,9 +920,25 @@
         if (type) element.classList.add(type);
       }
 
+      function matchesSourceFilters(item) {
+        const query = (sourceSearch.value || '').trim().toLowerCase();
+        const text = `${item.name} ${item.source} ${item.type} ${item.category} ${item.description}`.toLowerCase();
+        const matchesQuery = !query || text.includes(query);
+        const matchesFilter = selectedSourceFilter === 'all' || item.source === selectedSourceFilter || item.type === selectedSourceFilter;
+        return matchesFilter && matchesQuery;
+      }
+
       function renderSources() {
-        externalSources.innerHTML = sourceCatalog.map((source) => `
+        const filteredItems = sourceCatalog.filter(matchesSourceFilters);
+
+        if (!filteredItems.length) {
+          externalSources.innerHTML = '<div class="alert">Nenhuma fonte encontrada com os filtros atuais.</div>';
+          return;
+        }
+
+        externalSources.innerHTML = filteredItems.map((source) => `
           <article class="source-card">
+            <img src="${source.thumb}" alt="${source.name}" />
             <span class="source-badge">${source.type}</span>
             <div class="source-card-body">
               <h3>${source.name}</h3>
@@ -961,7 +1057,7 @@
         }
       }
 
-      async function submitJson(url, payload, statusNode, options = {}) {
+      async function submitJson(url, payload, statusNode) {
         const response = await fetch(url, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -976,6 +1072,18 @@
         if (statusNode) setAlert(statusNode, result.message || 'Sucesso!', 'success');
         return result;
       }
+
+      document.getElementById('sourceFilters').addEventListener('click', (event) => {
+        const button = event.target.closest('[data-filter]');
+        if (!button) return;
+        selectedSourceFilter = button.dataset.filter;
+        document.querySelectorAll('.filter-pill').forEach((pill) => {
+          pill.classList.toggle('active', pill === button);
+        });
+        renderSources();
+      });
+
+      sourceSearch.addEventListener('input', renderSources);
 
       document.getElementById('newsletterForm').addEventListener('submit', async (event) => {
         event.preventDefault();
