@@ -17,12 +17,9 @@ Acesse `http://localhost:3000`.
 
 ## Área administrativa privada
 
-Acesse `/admin`. Configure no ambiente do servidor:
+Acesse `/admin`. Configure no ambiente do servidor `ADMIN_USERNAME`, `ADMIN_PASSWORD` e `ADMIN_SESSION_SECRET`. O usuário sugerido é `davi`; defina uma senha forte, longa, exclusiva e não divulgada em chats. Nunca grave credenciais reais no Git ou em arquivos públicos. O segredo de sessão deve ser um valor aleatório longo e separado da senha.
 
-- `ADMIN_PASSWORD`: senha forte e exclusiva para o administrador.
-- `ADMIN_SESSION_SECRET`: segredo aleatório longo usado para assinar a sessão. Nunca reutilize uma senha ou publique esse valor.
-
-A sessão usa cookie HttpOnly, SameSite=Strict e expira em oito horas. Tentativas de login são limitadas. Em produção, publique somente com HTTPS; os cookies serão marcados como Secure quando `NODE_ENV=production`. O painel mostra apenas indicadores de configuração e não expõe segredos. Sem as duas variáveis, o login permanece desabilitado. Se perder o acesso, ajuste as variáveis e reinicie o servidor.
+A sessão usa cookie HttpOnly, SameSite=Strict e expira em oito horas. Tentativas de login são limitadas. Em produção, publique somente com HTTPS; os cookies serão marcados como Secure quando `NODE_ENV=production`. O painel mostra apenas indicadores de configuração e não expõe segredos. Sem as variáveis obrigatórias, o login permanece desabilitado. Se perder o acesso, ajuste as variáveis e reinicie o servidor.
 
 ## Pesquisa e IA
 

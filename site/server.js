@@ -75,12 +75,15 @@ app.get('/api/config', (req, res) => res.json({ dvOdontoUrl }));
 app.get('/api/health', (req, res) => res.json({ success: true, status: 'ok', aiConfigured: Boolean(process.env.GROQ_API_KEY) }));
 
 app.post('/api/admin/login', adminLoginLimiter, (req, res) => {
-  if (!process.env.ADMIN_PASSWORD || !process.env.ADMIN_SESSION_SECRET) {
+  if (!process.env.ADMIN_USERNAME || !process.env.ADMIN_PASSWORD || !process.env.ADMIN_SESSION_SECRET) {
     return res.status(503).json({ success: false, error: 'A área administrativa ainda não foi configurada pelo responsável do servidor.' });
   }
+  const username = typeof req.body?.username === 'string' ? req.body.username : '';
   const password = typeof req.body?.password === 'string' ? req.body.password : '';
-  if (!password || !safeEqualText(password, process.env.ADMIN_PASSWORD)) {
-    return res.status(401).json({ success: false, error: 'Senha incorreta.' });
+  const validUsername = safeEqualText(username, process.env.ADMIN_USERNAME);
+  const validPassword = safeEqualText(password, process.env.ADMIN_PASSWORD);
+  if (!validUsername || !validPassword) {
+    return res.status(401).json({ success: false, error: 'Usuário ou senha incorretos.' });
   }
   const token = signSession(Date.now() + SESSION_MAX_AGE);
   res.cookie('vv_admin', token, {
@@ -153,5 +156,5 @@ app.use((error, req, res, next) => {
 app.listen(PORT, () => {
   console.log(`[SERVIDOR] Voz Verídica disponível na porta ${PORT}`);
   console.log(`[IA] ${process.env.GROQ_API_KEY ? 'Groq configurada' : 'Sem chave; pesquisa de notícias funciona sem síntese IA'}`);
-  console.log(`[ADMIN] ${process.env.ADMIN_PASSWORD && process.env.ADMIN_SESSION_SECRET ? 'Autenticação configurada' : 'Configure ADMIN_PASSWORD e ADMIN_SESSION_SECRET para habilitar /admin'}`);
+  console.log(`[ADMIN] ${process.env.ADMIN_USERNAME && process.env.ADMIN_PASSWORD && process.env.ADMIN_SESSION_SECRET ? 'Autenticação configurada' : 'Configure ADMIN_USERNAME, ADMIN_PASSWORD e ADMIN_SESSION_SECRET para habilitar /admin'}`);
 });
