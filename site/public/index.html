@@ -1,64 +1,71 @@
-<!DOCTYPE html>
-<html lang="pt-BR" class="scroll-smooth">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#0b0f19">
-  <meta name="description" content="Voz Verídica: jornalismo independente, notícias, análises e vídeos em destaque.">
-  <title>Voz Verídica | Jornalismo Livre e Análise Crítica</title>
-  <style>
-    :root{color-scheme:dark;--bg:#0b0f19;--card:#151c2c;--card2:#101725;--red:#ef4444;--red-hover:#dc2626;--orange:#f97316;--text:#f1f5f9;--muted:#94a3b8;--line:#263247;--green:#10b981;--shadow:0 18px 48px #0005}
-    *{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:82px}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.6 Inter,Arial,sans-serif}h1,h2,h3,.serif{font-family:Georgia,'Times New Roman',serif;line-height:1.2}a{color:inherit;text-decoration:none}button,input,textarea{font:inherit}button,a,input,textarea{outline-offset:3px} :focus-visible{outline:2px solid #fb7185}img{display:block;max-width:100%}.wrap{width:min(1180px,calc(100% - 36px));margin:auto}
-    .header{position:sticky;top:0;z-index:20;background:#0b0f19ed;backdrop-filter:blur(12px);border-bottom:1px solid #263247aa}.header-inner{min-height:74px;display:flex;align-items:center;justify-content:space-between;gap:22px}.brand{display:flex;align-items:center;gap:12px}.brand-mark{height:36px;width:5px;border-radius:4px;background:var(--red)}.brand strong{display:block;font-size:19px;letter-spacing:.04em}.brand small{display:block;color:var(--muted);font-size:10px;letter-spacing:.13em;text-transform:uppercase}.nav{display:flex;gap:22px;color:#cbd5e1;font-size:14px}.nav a:hover,.footer a:hover{color:#fb7185}.header-actions{display:flex;align-items:center;gap:12px}.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:9px;padding:11px 17px;background:var(--red);color:#fff;font-weight:700;cursor:pointer;transition:.18s}.btn:hover{background:var(--red-hover);transform:translateY(-1px)}.btn-muted{background:#202b3d;border:1px solid #344258}.btn-muted:hover{background:#2b384d}.cart-count{display:inline-grid;place-items:center;min-width:21px;height:21px;padding:0 5px;border-radius:50px;background:#991b1b;font-size:12px}
-    .hero{padding:42px 0 34px}.hero-grid{display:grid;grid-template-columns:minmax(290px,.85fr) minmax(0,1.65fr);gap:22px}.panel,.story,.card{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}.agent{padding:22px}.agent-title{display:flex;align-items:center;gap:12px;margin:0 0 5px;font:700 18px Inter,Arial,sans-serif}.agent p,.muted{color:var(--muted)}.agent p{margin:0 0 18px;font-size:13px}.stack{display:grid;gap:11px}.field{width:100%;padding:12px 13px;border:1px solid #344258;border-radius:9px;background:#0b0f19;color:var(--text)}textarea.field{resize:vertical;min-height:108px}.agent .btn{width:100%;background:#059669}.agent .btn:hover{background:#047857}.status{min-height:22px;margin:10px 0 0;text-align:center;color:var(--muted);font-size:13px}.feature{position:relative;overflow:hidden;min-height:385px;display:flex;align-items:flex-end;background:linear-gradient(0deg,#080b13 2%,#080b13a6 48%,transparent 100%),linear-gradient(120deg,#263247,#111827);border-radius:18px;border:1px solid var(--line)}.feature img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}.feature-content{position:relative;z-index:1;padding:30px;max-width:780px}.tag{display:inline-block;padding:4px 10px;border-radius:5px;background:var(--red);color:#fff;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.09em}.feature h1{font-size:clamp(28px,4vw,48px);margin:14px 0 10px}.feature p{max-width:680px;color:#dbe4ef;margin:0 0 14px}.meta{display:flex;flex-wrap:wrap;gap:10px;color:#cbd5e1;font-size:12px}
-    section.content{padding:35px 0}.section-head{display:flex;align-items:end;justify-content:space-between;gap:18px;margin-bottom:20px}.section-head h2{margin:0;font-size:clamp(25px,3vw,34px)}.section-head p{margin:5px 0 0;color:var(--muted);font-size:14px}.section-label{color:#fb7185;text-transform:uppercase;letter-spacing:.16em;font-size:11px;font-weight:800}.news-grid,.product-grid,.video-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}.news-card,.product-card{overflow:hidden}.news-card img,.product-card img{width:100%;aspect-ratio:16/9;object-fit:cover;background:#202b3d}.news-body,.product-body{padding:18px}.news-body h3,.product-body h3{margin:8px 0;font-size:20px}.news-body p,.product-body p{margin:0;color:var(--muted);font-size:14px}.news-meta{display:flex;justify-content:space-between;gap:12px;color:var(--muted);font-size:12px}.empty{grid-column:1/-1;color:var(--muted);padding:20px 0}
-    .videos{border-top:1px solid #263247;border-bottom:1px solid #263247;background:linear-gradient(120deg,#101725,#0b0f19)}.video-card{overflow:hidden}.video-art{position:relative;display:grid;place-items:center;min-height:190px;background:radial-gradient(circle at 70% 35%,#7f1d1d,#251a25 45%,#111827);border-bottom:1px solid var(--line)}.video-art:before{content:'BP';font:900 58px Georgia,serif;color:#ffffff21;letter-spacing:.08em}.play{position:absolute;display:grid;place-items:center;width:58px;height:58px;border-radius:50%;background:#ef4444e8;color:white;font-size:24px;padding-left:4px;box-shadow:0 8px 24px #0008}.video-body{padding:18px}.video-body h3{margin:0 0 8px;font-size:19px}.video-body p{margin:0 0 15px;color:var(--muted);font-size:14px}.video-links{display:flex;flex-wrap:wrap;gap:10px}.video-link{display:inline-flex;padding:9px 13px;border:1px solid #4b5563;border-radius:7px;color:#fecaca;font-weight:700;font-size:13px}.video-link:hover{background:#7f1d1d55;border-color:#ef4444}
-    .store{border-top:1px solid #263247}.store-layout{display:grid;grid-template-columns:1fr 300px;gap:20px}.product-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.product-body{display:flex;flex-direction:column;align-items:flex-start;height:100%}.product-bottom{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:auto;padding-top:16px}.price{font-weight:800;font-size:19px}.badge{display:inline-block;color:#fdba74;background:#f973161f;padding:3px 8px;border-radius:5px;font-size:11px}.basket{padding:20px;align-self:start;position:sticky;top:92px}.basket h3{margin:0 0 15px}.basket ul{list-style:none;padding:0;margin:0;display:grid;gap:10px}.basket li{display:flex;justify-content:space-between;gap:10px;padding:10px;background:#0b0f19;border-radius:8px;font-size:13px}.basket-total{display:flex;justify-content:space-between;margin:16px 0;font-weight:700}.basket .btn{width:100%}
-    .support{display:grid;grid-template-columns:1fr 1fr;gap:20px}.support .panel{padding:22px}.support h2{margin:0 0 14px;font-size:24px}.support form{display:grid;gap:12px}.footer{margin-top:30px;padding:30px 0;border-top:1px solid var(--line);background:#080b13;color:var(--muted);font-size:13px}.footer-inner{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}.footer strong{color:white}.footer nav{display:flex;gap:18px}
-    .overlay{position:fixed;inset:0;background:#000a;z-index:40;display:none}.drawer{position:fixed;z-index:41;inset:0 0 0 auto;width:min(410px,100%);padding:22px;background:var(--card);border-left:1px solid var(--line);transform:translateX(105%);transition:transform .25s;overflow:auto}.drawer.open{transform:none}.overlay.open{display:block}.drawer-head{display:flex;justify-content:space-between;align-items:center}.drawer-head h2{margin:0}.icon-button{background:none;border:0;color:white;font-size:28px;cursor:pointer}
-    @media(max-width:900px){.nav{display:none}.hero-grid{grid-template-columns:1fr}.feature{min-height:340px}.news-grid,.video-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.store-layout{grid-template-columns:1fr}.basket{position:static}.product-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-    @media(max-width:600px){.wrap{width:min(100% - 26px,1180px)}.header-inner{min-height:66px}.brand small{display:none}.header-actions .btn{padding:9px 11px;font-size:13px}.hero{padding-top:22px}.feature{min-height:330px}.feature-content{padding:20px}.news-grid,.video-grid,.product-grid,.support{grid-template-columns:1fr}.section-head{align-items:flex-start;flex-direction:column}.agent{padding:17px}.footer-inner{align-items:flex-start;flex-direction:column}}
-  </style>
-</head>
-<body>
-  <header class="header"><div class="wrap header-inner">
-    <a class="brand" href="#inicio" aria-label="Voz Verídica, início"><span class="brand-mark"></span><span><strong>VOZ VERÍDICA</strong><small>Análise crítica, fatos sem filtro</small></span></a>
-    <nav class="nav" aria-label="Navegação principal"><a href="#noticias">Notícias</a><a href="#videos">Vídeos BP</a><a href="#loja">Loja</a><a href="#apoie">Apoie</a></nav>
-    <div class="header-actions"><button class="btn btn-muted" id="cart-btn" type="button">Carrinho <span class="cart-count" id="cart-count">0</span></button><a class="btn" href="#apoie">Apoie</a></div>
-  </div></header>
-  <main id="inicio">
-    <div class="wrap hero"><div class="hero-grid">
-      <section class="panel agent" aria-labelledby="agent-title"><h2 id="agent-title" class="agent-title"><span aria-hidden="true">🤖</span> Agente de IA</h2><p>Curadoria e reescrita automática de notícias</p>
-        <form id="agent-form" class="stack"><input class="field" id="raw-title" type="text" placeholder="Título bruto da notícia" required><input class="field" id="raw-source" type="text" placeholder="Fonte original (ex.: Agência Brasil)"><textarea class="field" id="raw-text" rows="4" placeholder="Cole aqui o texto para a IA filtrar e reescrever…" required></textarea><button class="btn" type="submit">Executar agente e publicar</button><div id="agent-status" class="status" role="status" aria-live="polite"></div></form>
-      </section>
-      <article id="hero-slot" class="feature"><div class="feature-content"><span class="tag">Em destaque</span><h1>Jornalismo livre, contexto e clareza.</h1><p>Carregando a reportagem em destaque…</p></div></article>
-    </div></div>
-    <section class="content wrap" id="noticias"><div class="section-head"><div><span class="section-label">Informação com contexto</span><h2>Em destaque agora</h2><p>As últimas notícias e análises da redação.</p></div></div><div id="news-grid" class="news-grid" aria-live="polite"><p class="empty">Carregando notícias…</p></div></section>
-    <section class="content videos" id="videos"><div class="wrap"><div class="section-head"><div><span class="section-label">Conteúdo externo</span><h2>Vídeos do Brasil Paralelo</h2><p>Acesse o canal e os documentários diretamente na fonte original.</p></div><a class="btn btn-muted" href="https://www.youtube.com/@brasilparalelo" target="_blank" rel="noopener noreferrer">Abrir canal oficial ↗</a></div>
-      <div class="video-grid">
-        <article class="card video-card"><a class="video-art" href="https://www.youtube.com/@brasilparalelo" target="_blank" rel="noopener noreferrer" aria-label="Abrir documentários do Brasil Paralelo no YouTube"><span class="play" aria-hidden="true">▶</span></a><div class="video-body"><h3>Documentários</h3><p>Produções audiovisuais sobre história, cultura e sociedade.</p><a class="video-link" href="https://www.youtube.com/@brasilparalelo" target="_blank" rel="noopener noreferrer">Ver documentários no canal ↗</a></div></article>
-        <article class="card video-card"><a class="video-art" href="https://www.youtube.com/@brasilparalelo" target="_blank" rel="noopener noreferrer" aria-label="Abrir entrevistas do Brasil Paralelo no YouTube"><span class="play" aria-hidden="true">▶</span></a><div class="video-body"><h3>Entrevistas e debates</h3><p>Conversas e diferentes perspectivas sobre temas atuais.</p><a class="video-link" href="https://www.youtube.com/@brasilparalelo" target="_blank" rel="noopener noreferrer">Assistir no YouTube ↗</a></div></article>
-        <article class="card video-card"><a class="video-art" href="https://www.brasilparalelo.com.br/" target="_blank" rel="noopener noreferrer" aria-label="Visitar o site do Brasil Paralelo"><span class="play" aria-hidden="true">▶</span></a><div class="video-body"><h3>Reportagens e especiais</h3><p>Explore os conteúdos completos e especiais no site da Brasil Paralelo.</p><a class="video-link" href="https://www.brasilparalelo.com.br/" target="_blank" rel="noopener noreferrer">Visitar Brasil Paralelo ↗</a></div></article>
-      </div><p class="muted" style="font-size:12px;margin:16px 0 0">Os vídeos e materiais permanecem hospedados pelos seus autores; os links abrem a fonte original.</p>
-    </div></section>
-    <section class="content wrap store" id="loja"><div class="section-head"><div><span class="section-label">Apoie a redação</span><h2>Loja do Jornalismo Livre</h2><p>Produtos oficiais que ajudam a financiar o projeto.</p></div></div><div class="store-layout"><div id="products-grid" class="product-grid" aria-live="polite"><p class="empty">Carregando produtos…</p></div><aside class="panel basket"><h3>Seu carrinho</h3><ul id="cart-items"><li class="muted">Carrinho vazio.</li></ul><div class="basket-total"><span>Total</span><span id="cart-total">R$ 0,00</span></div><button id="checkout-btn" class="btn" type="button">Finalizar via PIX</button><div id="checkout-status" class="status" role="status" aria-live="polite"></div></aside></div></section>
-    <section class="content wrap" id="apoie"><div class="support"><article class="panel"><h2>Fortaleça o jornalismo livre</h2><p class="muted">Sua contribuição apoia investigações, análises e acesso aberto à informação.</p><form id="donation-form"><input class="field" type="number" id="custom-amount" value="30" min="5" step="0.01" required aria-label="Valor da doação em reais"><button class="btn" type="submit">Gerar PIX</button><div id="donation-status" class="status" role="status" aria-live="polite"></div></form></article><article class="panel"><h2>Envie uma pauta</h2><p class="muted">Tem uma informação ou sugestão para a redação? Entre em contato.</p><a class="btn btn-muted" href="mailto:redacao@vozveridica.com.br">Falar com a redação</a></article></div></section>
-  </main>
-  <footer class="footer"><div class="wrap footer-inner"><div><strong>Voz Verídica © 2026</strong><br>Compromisso com transparência, contexto e democracia.</div><nav aria-label="Links do rodapé"><a href="#noticias">Notícias</a><a href="#videos">Vídeos</a><a href="#apoie">Apoie</a></nav></div></footer>
-  <div id="cart-overlay" class="overlay"></div><aside id="cart-drawer" class="drawer" aria-label="Seu carrinho" aria-hidden="true"><div class="drawer-head"><h2>Seu carrinho</h2><button id="cart-close" class="icon-button" type="button" aria-label="Fechar carrinho">×</button></div><p class="muted">Confira os itens e finalize sua compra.</p><ul id="drawer-items" class="basket" style="padding:0;list-style:none"></ul></aside>
-  <script>
-    const cart = new Map();
-    const money = value => new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(value)||0);
-    const text = value => String(value ?? '');
-    function node(tag, className, value){const el=document.createElement(tag);if(className)el.className=className;if(value!==undefined)el.textContent=text(value);return el;}
-    function renderCart(){const items=[...cart.values()];const count=items.reduce((sum,item)=>sum+item.qty,0);document.getElementById('cart-count').textContent=count;for(const id of ['cart-items','drawer-items']){const list=document.getElementById(id);list.replaceChildren();if(!items.length){list.append(node('li','muted','Carrinho vazio.'));continue;}items.forEach(item=>{const li=node('li','',`${item.nome} ×${item.qty} — ${money(item.preco*item.qty)}`);list.append(li);});}document.getElementById('cart-total').textContent=money(items.reduce((sum,item)=>sum+item.preco*item.qty,0));}
-    async function loadNews(){const grid=document.getElementById('news-grid');try{const response=await fetch('/api/news');const payload=await response.json();if(!response.ok||!Array.isArray(payload.data))throw new Error();const articles=payload.data;if(!articles.length){grid.replaceChildren(node('p','empty','Nenhuma notícia disponível no momento.'));return;}const lead=articles.find(item=>item.destaque)||articles[0];const hero=document.getElementById('hero-slot');hero.replaceChildren();if(lead.imagem){const image=node('img');image.src=lead.imagem;image.alt='';image.loading='lazy';hero.append(image);}const content=node('div','feature-content');content.append(node('span','tag',lead.categoria||'Destaque'),node('h1','',lead.titulo||'Notícia em destaque'),node('p','',lead.resumo||''));const meta=node('div','meta',`${lead.autor||lead.fonteOriginal||'Voz Verídica'} · ${lead.data||''}`);content.append(meta);hero.append(content);grid.replaceChildren();articles.filter(item=>item!==lead).slice(0,9).forEach(item=>{const card=node('article','card news-card');if(item.imagem){const image=node('img');image.src=item.imagem;image.alt='';image.loading='lazy';card.append(image);}const body=node('div','news-body');body.append(node('div','news-meta',`${item.categoria||'Notícia'} · ${item.data||''}`),node('h3','',item.titulo||'Notícia'),node('p','',item.resumo||''));card.append(body);grid.append(card);});if(grid.childElementCount===0)grid.append(node('p','empty','A reportagem principal está em destaque acima.'));}catch{grid.replaceChildren(node('p','empty','Não foi possível carregar as notícias. Tente novamente mais tarde.'));}}
-    async function loadProducts(){const grid=document.getElementById('products-grid');try{const response=await fetch('/api/products');const payload=await response.json();if(!response.ok||!Array.isArray(payload.data))throw new Error();if(!payload.data.length){grid.replaceChildren(node('p','empty','Nenhum produto disponível.'));return;}grid.replaceChildren();payload.data.forEach(product=>{const card=node('article','card product-card');if(product.imagem){const image=node('img');image.src=product.imagem;image.alt=product.nome||'Produto';image.loading='lazy';card.append(image);}const body=node('div','product-body');body.append(node('span','badge',product.badge||'Voz Verídica'),node('h3','',product.nome||'Produto'),node('p','',product.descricao||''));const bottom=node('div','product-bottom');bottom.append(node('span','price',money(product.preco)));const button=node('button','btn','Adicionar');button.type='button';button.addEventListener('click',()=>{const current=cart.get(product.id);cart.set(product.id,{...product,qty:current?current.qty+1:1});renderCart();});bottom.append(button);body.append(bottom);card.append(body);grid.append(card);});}catch{grid.replaceChildren(node('p','empty','Não foi possível carregar os produtos.'));}}
-    const overlay=document.getElementById('cart-overlay'),drawer=document.getElementById('cart-drawer');function openCart(){overlay.classList.add('open');drawer.classList.add('open');drawer.setAttribute('aria-hidden','false');}function closeCart(){overlay.classList.remove('open');drawer.classList.remove('open');drawer.setAttribute('aria-hidden','true');}document.getElementById('cart-btn').addEventListener('click',openCart);document.getElementById('cart-close').addEventListener('click',closeCart);overlay.addEventListener('click',closeCart);document.addEventListener('keydown',event=>{if(event.key==='Escape')closeCart();});
-    document.getElementById('checkout-btn').addEventListener('click',async()=>{const status=document.getElementById('checkout-status');if(!cart.size){status.textContent='Seu carrinho está vazio.';return;}status.textContent='Processando…';try{const response=await fetch('/api/checkout',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({items:[...cart.values()].map(item=>({id:item.id,qty:item.qty}))})});const result=await response.json();if(!response.ok||!result.success)throw new Error(result.error||'Erro no checkout.');status.textContent=`Pedido #${result.orderId} criado. Total ${money(result.total)}. PIX: ${result.pixKey}`;cart.clear();renderCart();}catch(error){status.textContent=error.message||'Erro de conexão.';}});
-    document.getElementById('agent-form').addEventListener('submit',async event=>{event.preventDefault();const status=document.getElementById('agent-status');status.textContent='Processando com a IA…';const payload={tituloBruto:document.getElementById('raw-title').value,fonte:document.getElementById('raw-source').value,textoBruto:document.getElementById('raw-text').value,categoria:'Política'};try{const response=await fetch('/api/agent/ingest',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});const result=await response.json();if(!response.ok||!result.success)throw new Error(result.error||'Erro ao processar.');status.textContent='Publicado com sucesso!';event.target.reset();loadNews();}catch(error){status.textContent=error.message||'Erro de conexão.';}});
-    document.getElementById('donation-form').addEventListener('submit',async event=>{event.preventDefault();const status=document.getElementById('donation-status');status.textContent='Gerando…';try{const response=await fetch('/api/donate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({amount:document.getElementById('custom-amount').value})});const result=await response.json();if(!response.ok)throw new Error(result.error||'Não foi possível gerar a doação.');status.textContent=result.message||'Solicitação enviada.';}catch(error){status.textContent=error.message||'Erro de conexão.';}});
-    document.addEventListener('DOMContentLoaded',()=>{loadNews();loadProducts();renderCart();});
-  </script>
-</body>
-</html>
+/**
+ * Módulo do Agente de IA: Curadoria e Remodelação de Conteúdo Público
+ */
+class NewsCuratorAgent {
+  constructor() {
+    this.systemPrompt = `
+      Você é um jornalista sênior, editor de redação e analista político do portal 'Voz Verídica'.
+      Sua tarefa é receber matérias públicas, comunicados ou rascunhos brutos e remodelá-los:
+      1. Extraia apenas os fatos verificáveis, o contexto central e os impactos relevantes.
+      2. Reescreva em tom analítico, direto e confiável, sem sensacionalismo ou exageros.
+      3. Crie um título forte, um resumo objetivo e um texto com boa fluidez editorial.
+      4. Atribua a categoria correta (Política, Economia, Sociedade, Opinião).
+      5. Priorize clareza, neutralidade e contexto para leitores que buscam informação útil.
+    `;
+  }
+
+  normalizeCategory(rawCategory) {
+    const category = String(rawCategory || 'Política').trim();
+    const valid = ['Política', 'Economia', 'Sociedade', 'Opinião'];
+    return valid.includes(category) ? category : 'Política';
+  }
+
+  createHeadline(title, category) {
+    const cleanedTitle = String(title || '').replace(/(urgente|bomba|confira|exclusivo|alerta)/gi, '').trim();
+    const finalTitle = cleanedTitle || `Análise do cenário em ${category.toLowerCase()}`;
+    return `ANÁLISE: ${finalTitle}`;
+  }
+
+  createSummary(text, category) {
+    const normalizedText = String(text || '').replace(/\s+/g, ' ').trim();
+    const snippet = normalizedText.length > 120 ? `${normalizedText.slice(0, 120)}...` : normalizedText || 'Leitura essencial sobre os desdobramentos do tema.';
+    return `Análise crítica sobre os impactos e os limites da pauta em ${category.toLowerCase()}: ${snippet}`;
+  }
+
+  async processAndRewrite(rawData) {
+    console.log(`[AGENTE IA] Processando matéria da fonte: ${rawData.fonte}`);
+
+    const categoria = this.normalizeCategory(rawData.categoria);
+    const tituloBruto = String(rawData.tituloBruto || 'Tema em debate');
+    const textoBruto = String(rawData.textoBruto || 'Conteúdo não informado.');
+    const fonte = String(rawData.fonte || 'Agência Pública');
+
+    const tituloRemodelado = this.createHeadline(tituloBruto, categoria);
+    const resumoRemodelado = this.createSummary(textoBruto, categoria);
+
+    const textoRemodelado = `
+      O cenário atual aponta para desdobramentos relevantes no setor de ${categoria.toLowerCase()}.
+      Conforme dados apurados na matéria original (${fonte}), os fatos centrais demonstram que a discussão exige atenção, contexto e acompanhamento contínuo por parte da sociedade e das instituições.
+
+      ${textoBruto}
+
+      ---
+      Análise Voz Verídica: a questão central não é apenas o anúncio isolado, mas o impacto real sobre direitos, regras, responsabilidades e percepção pública. O acompanhamento constante é essencial para que a informação continue útil, verificável e bem contextualizada.
+    `.trim();
+
+    return {
+      id: Date.now(),
+      categoria,
+      titulo: tituloRemodelado,
+      resumo: resumoRemodelado,
+      conteudo: textoRemodelado,
+      autor: 'Agente IA / Redação Voz Verídica',
+      fonteOriginal: fonte,
+      data: new Date().toISOString().slice(0, 10),
+      imagem: rawData.imagem || 'https://images.unsplash.com/photo-1541872703-74c5e44368f9?auto=format&fit=crop&w=800&q=80',
+      destaque: false
+    };
+  }
+}
+
+module.exports = new NewsCuratorAgent();
