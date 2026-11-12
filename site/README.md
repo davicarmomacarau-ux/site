@@ -15,33 +15,35 @@ npm start
 
 Acesse `http://localhost:3000`.
 
-## IA e pesquisa
+## Área administrativa privada
+
+Acesse `/admin`. Configure no ambiente do servidor:
+
+- `ADMIN_PASSWORD`: senha forte e exclusiva para o administrador.
+- `ADMIN_SESSION_SECRET`: segredo aleatório longo usado para assinar a sessão. Nunca reutilize uma senha ou publique esse valor.
+
+A sessão usa cookie HttpOnly, SameSite=Strict e expira em oito horas. Tentativas de login são limitadas. Em produção, publique somente com HTTPS; os cookies serão marcados como Secure quando `NODE_ENV=production`. O painel mostra apenas indicadores de configuração e não expõe segredos. Sem as duas variáveis, o login permanece desabilitado. Se perder o acesso, ajuste as variáveis e reinicie o servidor.
+
+## Pesquisa e IA
 
 - A busca de notícias usa o RSS público do Google Notícias e pode funcionar sem chave de IA.
 - Para a síntese automatizada, configure `GROQ_API_KEY` no ambiente do servidor. Nunca coloque essa chave no HTML ou no navegador.
 - É possível configurar `GROQ_MODEL` e `DV_ODONTO_URL` no ambiente.
-- A disponibilidade, as cotas e os termos de uso de serviços externos podem mudar. A aplicação não finge gerar síntese por IA quando ela não está configurada.
-- A página também oferece atalhos para pesquisar diretamente no Google, Bing e DuckDuckGo. Esses links abrem os sites externos no navegador; o site não fornece VPN, proxy nem contorno de bloqueios geográficos.
+- A aplicação oferece atalhos para pesquisar diretamente no Google, Bing e DuckDuckGo. A seleção de região afeta somente os parâmetros de busca; não altera IP e não é VPN, proxy ou ferramenta para contornar bloqueios.
+- Cotas e termos de serviços externos podem mudar. A síntese é auxiliar, pode conter erros e não substitui verificação editorial.
 
 ## Link do DV Odonto
 
 Por padrão, o botão aponta para `https://github.com/davicarmomacarau-ux/DV-Odonto`. Esse repositório está privado; só pessoas autorizadas terão acesso. Configure `DV_ODONTO_URL` para apontar para uma página pública do software quando estiver disponível.
 
-## Publicar e configurar domínio
+## Publicação e domínio
 
-Não é possível registrar ou atribuir um domínio sem escolher um nome disponível, ter acesso a um registrador e configurar a hospedagem/DNS. O projeto está preparado para rodar como aplicação Node.js: publique a pasta `site` em um host compatível, adicione as variáveis de ambiente no painel do host e associe um domínio que você já possui. O provedor de hospedagem fornecerá os registros DNS necessários; ative HTTPS e defina `GROQ_API_KEY` e `DV_ODONTO_URL` no ambiente seguro do servidor.
-
-Domínio personalizado e hospedagem não são garantidamente gratuitos: preço, disponibilidade, certificados e limites dependem do registrador e do host escolhidos. Verifique a disponibilidade e os custos antes de comprar.
-
-## Variáveis de ambiente
-
-Consulte `.env.example`. `GROQ_API_KEY` é opcional para a pesquisa e necessária para gerar síntese por IA.
+Não é possível registrar ou atribuir um domínio sem escolher um nome disponível, ter acesso a um registrador e configurar a hospedagem/DNS. Publique a pasta `site` em um host compatível com Node.js, defina as variáveis de ambiente no painel seguro do host e associe um domínio que você já possui. O provedor informará os registros DNS necessários; ative HTTPS. Preço e disponibilidade do domínio/hospedagem dependem dos fornecedores.
 
 ## API
 
-- `GET /api/health` — estado do servidor e indicação se a chave da IA está configurada.
+- `GET /api/health` — estado do servidor e indicação se a chave IA está configurada.
 - `GET /api/news?q=tema` — notícias recentes encontradas.
 - `POST /api/research` com `{ "query": "tema" }` — matérias e síntese opcional.
 - `GET /api/config` — URL do DV Odonto.
-
-A síntese automática pode conter erros e não substitui verificação editorial. Consulte e cite as fontes originais ao reutilizar conteúdo.
+- `POST /api/admin/login`, `POST /api/admin/logout`, `GET /api/admin/status` — endpoints da área restrita.
